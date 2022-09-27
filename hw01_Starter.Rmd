@@ -1,0 +1,187 @@
+---
+title: "DATA-413/613 HW 01"
+author: "Minh To"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    number_sections: true
+    theme:  NULL
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.align = "center",
+  fig.height = 5,
+  fig.width = 6.5
+)
+```
+
+# Canvas Picture, Syllabus, and Student Info
+
+Review the Syllabus on Canvas and answer the following questions:
+
+I, *enter your name* have:
+
+1.  Ensured my Canvas Profile has a photo of me (head and shoulders)
+
+2.  Reviewed the syllabus and the associated policies on the following date: ***fill in the date***\_\_\_\_\_\_\_
+
+3.  Reviewed the American University policies on academic integrity and I agree to comply with them and the additional guidance in the syllabus for this course
+
+4.  Confirmed my information in the Student Info spreadsheet on Canvas Collaborations is correct.
+
+# College Scorecard
+
+The data folder contains "college_scorecard_extract_2022-04-20.csv", a *subset* of the data in the [College Scorecard](https://collegescorecard.ed.gov/data/) database as of April 04. 2022. The data contain information on college cohorts in the United States. The data dictionary is in the `data` folder. The variables include:
+
+-   `UNITID` and `OPEID`: Identifiers for the colleges.
+-   `INSTNM`: Institution name
+-   `ADM_RATE`: The Admission Rate.
+-   `SAT_AVE`: Average SAT equivalent score of students admitted.
+-   `UGDS`: Enrollment of undergraduate certificate/degree-seeking students
+-   `COSTT4_A`: Average cost of attendance (academic year institutions)
+-   `AVGFACSAL`: Average faculty salary
+-   `GRAD_DEBT_MDN`: The median debt for students who have completed
+-   `AGE_ENTRY`: Average age of entry
+-   `ICLEVEL`: Level of institution (1 = 4-year, 2 = 2-year, 3 = less than 2-year).
+-   `MN_EARN_WNE_P10`: Mean earnings of students working and not enrolled 10 years after entry.
+-   `MD_EARN_WNE_P10`: Median earnings of students working and not enrolled 10 years after entry.
+-   `FEMALE`: Share of female students
+-   `PCT_WHITE`: Percent of the population from students' zip codes that is White, via Census data
+
+
+1.  Load the data.
+
+    1.  Use a relative path and one call to a {readr} function to load the file `data/college_scorecard_extract_2022-04-20.csv` and save the resulting tibble. Note, this data uses "NULL" instead of `NA`. As part of loading the data, use an argument of the {readr} function you chose to convert "NULL" to `NA`. Do not not suppress messages or warnings.
+    2.  Use `glimpse()` to examine the data.
+
+
+2.  If you used the default settings for reading in the data, multiple variables are probably type/class character when the data suggests they should be numeric.
+    1.  Which ones are they?
+    2.  Why were they read in as type character?
+
+3.  Reload the data with a {readr} function and use an argument to convert the offending entries to `NA`s so the variables are automatically read in as class numeric. You should have 31 variables of type double.
+
+
+4.  How is average faculty salary associated with the average earnings of students ten years after initial enrollment?
+
+-   Use {ggplot2} to create an appropriate plot to assess for a relationship (with `AVGFACSAL` as the explanatory X variable), while using a {ggplot2} function argument to reduce overplotting and adding the default smoother with `se = FALSE` and faceting on `ICLEVEL`.
+
+    1.  Explain why {ggplot2} chose the smoothing method.
+    2.  Interpret the plots about the potential relationship.
+    3.  Why is there no `ICLEVEL` 3 plot or if there is a plot why is there no data in the `ICLEVEL` 3 plot?
+
+
+-   Use `lm()` to run a linear model of the relationship **for only those schools with ICLEVEL 1** and save the results.
+
+    1.  Interpret the results of the model based on the $p$ value and $r$-squared value.
+    2.  Given the $r$-squared value, what might you recommend to try to better predict average earnings of students ten years after initial enrollment at ICLEVEL 1 schools?
+
+
+5.  Does the level of the institution seem to be associated with the mean earnings of students ten years after enrollment?
+
+-   Make a plot
+
+    1.  Reproduce this plot using {ggplot2} to explore this relationship.
+
+        -   Use the `ggthemes::theme_fivethirtyeight()` and chunk option `fig.width=7`.
+
+    2.  Interpret the plot.
+
+
+-   Use `aov()` to test if all of the IC levels have the same true mean of *logged* earnings of students ten years after enrollment.
+    1.  Why would we look at the log of mean earnings instead of the un-logged values?
+    2.  Use `broom::tidy()` to show the results.
+    3.  Interpret the results
+
+6.  Create two plots with the attributes below
+    1.  Plot the median earnings 10 years after enrollment for level 1 institutions as the Y axis against `PCT_WHITE`
+    2.  Plot the median earnings 10 years after enrollment for level 1 institutions as the Y axis against `FEMALE`
+        -   Use a log scale as appropriate.
+        -   Add a loess smoother.
+    3.  Describe and interpret the non-linear relationship in each of the plots.
+    4.  What are the ethical implications of the definition of PCT_White?
+    5.  Extra Credit: Add a point colored red for American University and a point colored green for the Massachusetts Institute of Technology in each plot such that the points automatically adjust with new data.
+
+
+
+7.  Create a single scatter plot of the mean earnings 10 years after enrollment (Y axis) compared to the median earnings 10 years after enrollment (X axis) with the following attributes:
+    1.  Use log scales for both axes.
+    2.  Add a 45 degree abline.
+    3.  Use color to differentiate the level of institutions (as a factor) and
+    4.  Attempt to reduce effects of overplotting.
+    5.  Interpret the plot and the relationship between the two variables **considering the abline**.
+
+
+8.  Rankings Based on Return on Investment ROI
+    1.  Calculate a measure of ROI as the ratio of median earnings 10 years after enrollment to median graduation debt for those schools that have both data elements - call it `ROI`.
+    2.  Use a {dplyr} function to compute a ranking of `ICLEVEL` 1 universities based on `ROI`.
+        -   Break any ties using the minimum value such that if two schools are tied for 4th, they are each ranked 4 and the next school is 6.
+    3.  Identify the top 5 best (highest ROI should be rank value 1 ) and the bottom 5 worst (smallest ROI should have largest rank number). Show only the rank, name, ROI, cost to attend, median debt at graduation, and median earnings 10 years after enrollment.
+    4.  What is American University's rank and ROI? Show only the rank, name, ROI, cost to attend, median debt at graduation and median earnings 10 years after enrollment.
+
+
+-   Extra Credit:
+    1.  Reproduce the following plot so the *AU line and number of institutions automatically adjust as new data is entered*:
+
+    2.  What is AU's new ranking and ROI if the mean earnings are used?
+
+
+# World Bank Data
+
+The World Bank provides loans to countries with the goal of reducing poverty. The dataframes in the data folder were taken from the public data repositories of the [World Bank](https://data.worldbank.org/).
+
+-   `country_2021.csv`: Contains information on the countries in the data set. Also includes totals for the regions (sets of countries) and the world. The variables are:
+    -   `Country_Code`: A three-letter code for the country. Note not all rows are countries; There are rows for the regions and for the world.
+    -   `Region`: The region of the country. **Take note: Region is `NA` for the individual regions and for the world.**
+    -   `IncomeGroup`: Either `"High income"`, `"Upper middle income"`, `"Lower middle income"`, or `"Low income"`. Take note: Region is `NA` for the individual regions and for the world.
+    -   `TableName`: The full name of the country or region.
+    -   `Special Notes`: Notes about the country or region
+-   `fertility_rate_2020.csv`: Contains the fertility rate information for each country, each region, and the world for each year.
+    -   For the variables `1960` to `2020`, the values in the cells represent the fertility rate in total births per woman for that year.
+    -   Total fertility rate represents the number of children that would be born to a woman if she were to live to the end of her childbearing years and bear children in accordance with age-specific fertility rates of the specified year.
+-   `life_expectancy_2020.csv`: Contains the life expectancy information for each country, each region, and the world for each year.
+    -   For the variables `1960` to `2020`, the values in the cells represent life expectancy at birth in years for the given year.
+    -   Life expectancy at birth indicates the number of years a newborn infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life.
+-   `population_2021.csv`: Contains the population information for each country, each region, and the world for the year.
+    -   For the variables `1960` to `2021`, the values in the cells represent the total population in number of people for the given year.
+    -   Total population is based on the *de facto* definition of population, which counts all residents regardless of legal status or citizenship. The values shown are mid-year estimates.
+
+1.  Use a relative path and a {readr} function to load each of these four files into its own tibble.
+
+
+2.  These data are messy. The observational units in `fert`, `life`, and `pop` are locations in space-time (e.g. Aruba in 2020). Recall that tidy data should have one observational unit per row. Using only two function calls for each data frame, tidy each data frame to have only four variables by:
+    1.  Removing the `Indicator Name` and `Indicator Code` columns.
+    2.  Using a {tidyr} function to tidy the tibble, and, by using an argument, ensure the variable for `year` is a numeric.
+    3.  Save the tidy tibble to a new name.
+
+
+git
+3.  Combine tibbles.
+    1.  Using a {dplyr} function, *join* the three tidy tibbles into one tibble, one after the other, and then use a {dplyr} function to join the data from the country tibble while removing any rows that have no data in country. The new tibble should have 16430 observations (rows) for 10 variables.
+    2.  Save the resulting tibble to a new name. It should include the fertility rate, population, and life expectancy in each year as well as the `Region`, `IncomeGroup`, `TableName`, and `SpecialNotes` for each country.
+    3.  Identify the distinct values for the two columns of `Country Name` and `TableName` where they do not match each other. There should be nine. What do you notice about them?
+
+
+4.  Make a single scatterplot with the following attributes:
+    1.  Show fertility rate (Y) vs life expectancy (X),
+    2.  Color-code by region and indicate population by size.
+    3.  Include only the years 1960, 1980, 2000, and 2020.
+    4.  Facet by these years.
+    5.  Your final plot should look like the below with `scale_color_viridis_d()` (Each element of the formatting is graded):
+    6.  **Interpret the plot in one sentence**.
+
+
+5.  Regional Population
+    1.  Calculate the total population for each region for each year.
+    2.  Make a line plot of year (Y) versus total population (X), color-coding by region and using a *log scale* for Y.
+    3.  Your final plot should look like the below using (`ggthemes::scale_color_colorblind`):
+    4.  **Interpret the plot in one sentence to identify the two fastest growing regions**.
+
+6.  Make a box plot of the percentage population growth for the countries in each region in the sixty year period between the two years 1960 and 2020 with the following attributes.
+    1.  Use code to automatically order the Regions on the $y$-axis in **increasing** order of total 1960 population.
+    2.  For any countries with negative growth set to .001.
+    3.  Add a red line at 100%
+    4.  Your final plot should look like the one below:
+    5.  **Interpret the plot in one sentence to compare the percentage growth with the previous plot.**
